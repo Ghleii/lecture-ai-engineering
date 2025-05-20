@@ -1,4 +1,7 @@
 import os
+import sys
+
+sys.path.insert(0, r"C:\Users\gglls\Documents\lecture-ai-engineering")
 import pytest
 import pandas as pd
 import numpy as np
@@ -11,6 +14,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from day5.演習1.main import prepare_data, train_and_evaluate
 
 # テスト用データとモデルパスを定義
 DATA_PATH = os.path.join(os.path.dirname(__file__), "../data/Titanic.csv")
