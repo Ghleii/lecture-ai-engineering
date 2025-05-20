@@ -1,7 +1,10 @@
 import os
 import sys
 
-sys.path.insert(0, r"C:\Users\gglls\Documents\lecture-ai-engineering")
+# リポジトリルートは現在のファイルから 3 つ上のディレクトリにある前提
+repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+sys.path.insert(0, repo_root)
+
 import pytest
 import pandas as pd
 import numpy as np
