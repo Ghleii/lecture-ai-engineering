@@ -125,10 +125,19 @@ def test_model_exists():
 
 def test_model_accuracy(prepared_data):
     X_train, X_test, y_train, y_test = prepared_data
-    model, accuracy = train_and_evaluate(X_train, X_test, y_train, y_test,
-                                         n_estimators=100, max_depth=None, random_state=42)
+    model, accuracy = train_and_evaluate(
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        n_estimators=100,
+        max_depth=None,
+        random_state=42,
+    )
     # モデル精度がベースライン以上かを検証
-    assert accuracy >= BASELINE_ACCURACY, f"Accuracy {accuracy} is below baseline {BASELINE_ACCURACY}"
+    assert (
+        accuracy >= BASELINE_ACCURACY
+    ), f"Accuracy {accuracy} is below baseline {BASELINE_ACCURACY}"
 
 
 def test_model_accuracy(train_model):
@@ -145,14 +154,23 @@ def test_model_accuracy(train_model):
 
 def test_model_inference_time(prepared_data):
     X_train, X_test, y_train, y_test = prepared_data
-    model, accuracy = train_and_evaluate(X_train, X_test, y_train, y_test,
-                                         n_estimators=100, max_depth=None, random_state=42)
+    model, accuracy = train_and_evaluate(
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        n_estimators=100,
+        max_depth=None,
+        random_state=42,
+    )
     # 推論時間を測定
     start_time = time.time()
     _ = model.predict(X_test)
     inference_time = time.time() - start_time
 
-    assert inference_time <= MAX_INFERENCE_TIME, f"Inference time {inference_time} exceeds {MAX_INFERENCE_TIME} seconds"
+    assert (
+        inference_time <= MAX_INFERENCE_TIME
+    ), f"Inference time {inference_time} exceeds {MAX_INFERENCE_TIME} seconds"
 
 
 def test_model_reproducibility(sample_data, preprocessor):
