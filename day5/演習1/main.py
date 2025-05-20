@@ -13,8 +13,8 @@ from mlflow.models.signature import infer_signature
 
 # データ準備
 def prepare_data(test_size=0.2, random_state=42):
-    # Titanicデータセットの読み込み
-    path = "data/Titanic.csv"
+    # Titanicデータセットの読み込み。ファイルは main.py と同じフォルダ内の "data" サブフォルダにあると仮定
+    path = os.path.join(os.path.dirname(__file__), "data", "Titanic.csv")
     data = pd.read_csv(path)
 
     # 必要な特徴量の選択と前処理

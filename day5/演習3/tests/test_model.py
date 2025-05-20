@@ -21,6 +21,10 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), "../data/Titanic.csv")
 MODEL_DIR = os.path.join(os.path.dirname(__file__), "../models")
 MODEL_PATH = os.path.join(MODEL_DIR, "titanic_model.pkl")
 
+# 目標精度と許容推論時間（例）
+BASELINE_ACCURACY = 0.75
+MAX_INFERENCE_TIME = 1.0  # 1秒以内
+
 
 @pytest.fixture
 def sample_data():
@@ -106,11 +110,25 @@ def train_model(sample_data, preprocessor):
     return model, X_test, y_test
 
 
+@pytest.fixture
+def prepared_data():
+    # 前処理されたデータを取得
+    return prepare_data(test_size=0.2, random_state=42)
+
+
 def test_model_exists():
     """モデルファイルが存在するか確認"""
     if not os.path.exists(MODEL_PATH):
         pytest.skip("モデルファイルが存在しないためスキップします")
     assert os.path.exists(MODEL_PATH), "モデルファイルが存在しません"
+
+
+def test_model_accuracy(prepared_data):
+    X_train, X_test, y_train, y_test = prepared_data
+    model, accuracy = train_and_evaluate(X_train, X_test, y_train, y_test,
+                                         n_estimators=100, max_depth=None, random_state=42)
+    # モデル精度がベースライン以上かを検証
+    assert accuracy >= BASELINE_ACCURACY, f"Accuracy {accuracy} is below baseline {BASELINE_ACCURACY}"
 
 
 def test_model_accuracy(train_model):
@@ -125,19 +143,16 @@ def test_model_accuracy(train_model):
     assert accuracy >= 0.75, f"モデルの精度が低すぎます: {accuracy}"
 
 
-def test_model_inference_time(train_model):
-    """モデルの推論時間を検証"""
-    model, X_test, _ = train_model
-
-    # 推論時間の計測
+def test_model_inference_time(prepared_data):
+    X_train, X_test, y_train, y_test = prepared_data
+    model, accuracy = train_and_evaluate(X_train, X_test, y_train, y_test,
+                                         n_estimators=100, max_depth=None, random_state=42)
+    # 推論時間を測定
     start_time = time.time()
-    model.predict(X_test)
-    end_time = time.time()
+    _ = model.predict(X_test)
+    inference_time = time.time() - start_time
 
-    inference_time = end_time - start_time
-
-    # 推論時間が1秒未満であることを確認
-    assert inference_time < 1.0, f"推論時間が長すぎます: {inference_time}秒"
+    assert inference_time <= MAX_INFERENCE_TIME, f"Inference time {inference_time} exceeds {MAX_INFERENCE_TIME} seconds"
 
 
 def test_model_reproducibility(sample_data, preprocessor):
